@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practice Javascript</title>
+</head>
+<body>
+  <style type="text/css">
+    table, td, th {
+      border: 1px solid black;
+    }
+
+    table, td {
+      border-collapse: collapse;
+      text-align: center;
+      width: 50%;
+    }
+  </style>
+  <script type="text/javascript">
+    var studentName, fatherName, rollNo, subjectCount, subjects, totalMarks, obtainMarks, subjectName, subjectTotal, subjectObtained, totalMarks, obtainMarks;
+    function getUserDetail(){
+      studentName = prompt("Please enter your name");
+      while (!studentName || studentName.trim() === "") {
+        studentName = prompt(`Student name cannot be empty. Please enter the name of student`);
+      }
+      fatherName = prompt("Please enter your father's name");
+      while (!fatherName || fatherName.trim() === "") {
+        fatherName = prompt(`Father name cannot be empty. Please enter the name of father`);
+      }
+      rollNo = prompt("Please enter your roll number");
+      while (rollNo.length < 10) {
+        rollNo = prompt("Enter Upto 10 digit roll number");
+      }
+    }
+    function getSubjectDetail(){
+      subjectCount = parseInt(prompt("How many subjects you are?"));
+      if (isNaN(subjectCount) || subjectCount <= 0) {
+        alert("Please enter a valid number of subjects.");
+        return;
+      }
+      subjects = [];
+      totalMarks = 0;
+      obtainMarks = 0;
+      for (let i = 0; i < subjectCount; i++) {
+        subjectName = prompt(`Enter name of subject ${i + 1}:`);
+        while (!subjectName || subjectName.trim() === "") {
+          subjectName = prompt(`Subject name cannot be empty. Please enter the name of subject ${i + 1}:`);
+        }
+        subjectTotal = parseInt(prompt(`Enter total marks for ${subjectName}:`));
+        while (isNaN(subjectTotal) || subjectTotal <= 0) {
+          subjectTotal = parseInt(prompt(`Invalid input. Please enter a valid total marks for ${subjectName}:`));
+        }
+        subjectObtained = parseInt(prompt(`Enter obtained marks for ${subjectName}:`));
+        while (isNaN(subjectObtained) || subjectObtained < 0 || subjectObtained > subjectTotal) {
+          subjectObtained = parseInt(prompt(`Invalid input. Please enter obtained marks (0-${subjectTotal}) for ${subjectName}:`));
+        }
+        subjects.push({
+          name: subjectName,
+          total: subjectTotal,
+          obtainedMarks: subjectObtained
+        });
+        totalMarks = totalMarks + subjectTotal;
+        obtainMarks = obtainMarks + subjectObtained;
+      }
+    }
+    function generateMarksheet() {
+      let per = parseInt((obtainMarks*100)/totalMarks)
+      if (per > 33) {
+        let pfRes = document.getElementById("pf").innerHTML = "<span style='color: green;'>Pass</span>";
+      }
+      else{
+       let pfRes = document.getElementById("pf").innerHTML = "<span style='color: red;'>Fail</span>";
+      }
+      document.getElementById("per1").innerHTML = per + " %"
+      document.getElementById("total1").innerHTML = obtainMarks
+      document.getElementById("fname1").innerHTML = studentName
+      document.getElementById("faname1").innerHTML = fatherName
+      document.getElementById("rollno1").innerHTML = rollNo
+      var table = document.querySelector("#mark table");
+      let srNo = 1;
+      for (let key in subjects) {
+        let subject = subjects[key];
+        let newRow = document.createElement("tr");
+        newRow.innerHTML = `
+          <td>${srNo}.</td>
+          <td>${subject.name}</td>
+          <td>${subject.total}</td>
+          <td>${subject.obtainedMarks}</td>
+         `;
+        table.appendChild(newRow);
+        srNo++;
+      }
+    }
+  </script>
+  <div id="main1">
+      <h1>STUNDENT MARKSHEET</h1>
+      <div id="info">
+        <h2>STUNDENT INFORMATION:</h2>
+        <table>
+          <tr>
+            <th>Name :</th>
+            <td id="fname1"></td>
+          </tr>
+          <tr>
+            <th>Reg. No / Roll No: </th>
+            <td id="rollno1"></td>
+          </tr>
+          <tr>
+            <th>Father Name :</th>
+            <td id="faname1"></td>
+          </tr>
+        </table>
+      </div>
+      <div id="mark">
+        <h2>SUBJECTS MARKS</h2>
+        <table>
+          <tr>
+            <th>SR. NO.</th>
+            <th>SUBJECT NAME</th>
+            <th>Total MARKS</th>
+            <th>MARK OBTAINED</th>
+          </tr>
+        </table>
+      </div>
+      <div id="result">
+        <h2>RESULT</h2>
+        <table>
+            <tr>
+              <th>TOTAL :</th>
+              <td id="total1"></td>
+            </tr>
+            <tr>
+              <th>PERCENTAGE :</th>
+              <td id="per1"></td>
+            </tr>
+            <tr>
+              <th>PASS/FAIL :</th>
+              <td id="pf"></td>
+            </tr>
+        </table>
+      </div>
+  </div>
+  <button onclick="generateMarksheet()">Create Marksheet</button>
+  <button onclick="getUserDetail()">User Detail</button>
+  <button onclick="getSubjectDetail()">Subjects Detail</button>
+</body>
+</html>
