@@ -18,23 +18,43 @@
     }
   </style>
   <script type="text/javascript">
-    var studentName, fatherName, rollNo, subjectCount, subjects, totalMarks, obtainMarks, subjectName, subjectTotal, subjectObtained, totalMarks, obtainMarks;
+    var studentName, fatherName, rollNo, subjectCount, subjects, totalMarks, obtainMarks, subjectName, subjectTotal, subjectObtained, totalMarks, obtainMarks, rollLen;
+
+    function isEqualTo(input, value){
+      return input.length == value
+    }
+
+    function getIsGreaterThan(input, value){
+      return input > value
+    }
+
+    function getInBetween(x, min, max){
+      return x >= min && x <= max;
+    }
+
+    function getValidateUser(inputMsg){
+      input = prompt(inputMsg);
+      return input;
+    }
+
     function getUserDetail(){
-      studentName = prompt("Please enter your name");
+      studentName = getValidateUser("Please enter your name");
       while (!studentName || studentName.trim() === "") {
-        studentName = prompt(`Student name cannot be empty. Please enter the name of student`);
+        studentName = getValidateUser(`Student name cannot be empty. Please enter the name of student`);
       }
-      fatherName = prompt("Please enter your father's name");
+      fatherName = getValidateUser("Please enter your father's name");
       while (!fatherName || fatherName.trim() === "") {
-        fatherName = prompt(`Father name cannot be empty. Please enter the name of father`);
+        fatherName = getValidateUser(`Father name cannot be empty. Please enter the name of father`);
       }
-      rollNo = prompt("Please enter your roll number");
-      while (rollNo.length < 10) {
-        rollNo = prompt("Enter Upto 10 digit roll number");
+      rollNo = getValidateUser("Please enter your roll number");
+      while (!isEqualTo(rollNo, 10)) {
+        rollLen = rollNo.length;
+        rollNo = getValidateUser("Enter Upto 10 digit roll number");
       }
     }
+
     function getSubjectDetail(){
-      subjectCount = parseInt(prompt("How many subjects you are?"));
+      subjectCount = parseInt(getValidateUser("How many subjects you are?"));
       if (isNaN(subjectCount) || subjectCount <= 0) {
         alert("Please enter a valid number of subjects.");
         return;
@@ -43,17 +63,17 @@
       totalMarks = 0;
       obtainMarks = 0;
       for (let i = 0; i < subjectCount; i++) {
-        subjectName = prompt(`Enter name of subject ${i + 1}:`);
+        subjectName = getValidateUser(`Enter name of subject ${i + 1}:`);
         while (!subjectName || subjectName.trim() === "") {
-          subjectName = prompt(`Subject name cannot be empty. Please enter the name of subject ${i + 1}:`);
+          subjectName = getValidateUser(`Subject name cannot be empty. Please enter the name of subject ${i + 1}:`);
         }
-        subjectTotal = parseInt(prompt(`Enter total marks for ${subjectName}:`));
+        subjectTotal = parseInt(getValidateUser(`Enter total marks for ${subjectName}:`));
         while (isNaN(subjectTotal) || subjectTotal <= 0) {
-          subjectTotal = parseInt(prompt(`Invalid input. Please enter a valid total marks for ${subjectName}:`));
+          subjectTotal = parseInt(getValidateUser(`Invalid input. Please enter a valid total marks for ${subjectName}:`));
         }
-        subjectObtained = parseInt(prompt(`Enter obtained marks for ${subjectName}:`));
+        subjectObtained = parseInt(getValidateUser(`Enter obtained marks for ${subjectName}:`));
         while (isNaN(subjectObtained) || subjectObtained < 0 || subjectObtained > subjectTotal) {
-          subjectObtained = parseInt(prompt(`Invalid input. Please enter obtained marks (0-${subjectTotal}) for ${subjectName}:`));
+          subjectObtained = parseInt(getValidateUser(`Invalid input. Please enter obtained marks (0-${subjectTotal}) for ${subjectName}:`));
         }
         subjects.push({
           name: subjectName,
@@ -64,14 +84,29 @@
         obtainMarks = obtainMarks + subjectObtained;
       }
     }
+
     function generateMarksheet() {
       let per = parseInt((obtainMarks*100)/totalMarks)
-      if (per > 33) {
-        let pfRes = document.getElementById("pf").innerHTML = "<span style='color: green;'>Pass</span>";
+      if (getIsGreaterThan(per, 33)) {
+        document.getElementById("pf").innerHTML = "<span style='color: green;'>Pass</span>";
       }
       else{
-       let pfRes = document.getElementById("pf").innerHTML = "<span style='color: red;'>Fail</span>";
+       document.getElementById("pf").innerHTML = "<span style='color: red;'>Fail</span>";
       }
+      if (getInBetween(per, 33, 40)){
+        document.getElementById("gr").innerHTML = "<span style='color: black;'>D</span>";
+      }else if(getInBetween(per, 40, 50)){
+        document.getElementById("gr").innerHTML = "<span style='color: black;'>C</span>";
+      }else if(getInBetween(per, 50, 60)){
+        document.getElementById("gr").innerHTML = "<span style='color: black;'>B</span>";
+      }else if(getInBetween(per, 60, 80)){
+        document.getElementById("gr").innerHTML = "<span style='color: black;'>A</span>";
+      }else if(getInBetween(per, 90, 100)){
+        document.getElementById("gr").innerHTML = "<span style='color: green;'>A++</span>";
+      }else{
+        document.getElementById("gr").innerHTML = "<span style='color: red;'>Fail</span>";
+      }
+
       document.getElementById("per1").innerHTML = per + " %"
       document.getElementById("total1").innerHTML = obtainMarks
       document.getElementById("fname1").innerHTML = studentName
@@ -79,8 +114,9 @@
       document.getElementById("rollno1").innerHTML = rollNo
       var table = document.querySelector("#mark table");
       let srNo = 1;
-      for (let key in subjects) {
-        let subject = subjects[key];
+      
+      // Iterate using ForEach
+      subjects.forEach(function (subject) {
         let newRow = document.createElement("tr");
         newRow.innerHTML = `
           <td>${srNo}.</td>
@@ -90,7 +126,35 @@
          `;
         table.appendChild(newRow);
         srNo++;
-      }
+      });
+
+      //iterate Using map
+      // subjects.map((subject) => {
+      //   // let subject = subjects[key];
+      //   let newRow = document.createElement("tr");
+      //   newRow.innerHTML = `
+      //     <td>${srNo}.</td>
+      //     <td>${subject.name}</td>
+      //     <td>${subject.total}</td>
+      //     <td>${subject.obtainedMarks}</td>
+      //    `;
+      //   table.appendChild(newRow);
+      //   srNo++;
+      // });
+
+      // Iterate Using for..in
+      // for (let key in subjects) {
+      //   let subject = subjects[key];
+      //   let newRow = document.createElement("tr");
+      //   newRow.innerHTML = `
+      //     <td>${srNo}.</td>
+      //     <td>${subject.name}</td>
+      //     <td>${subject.total}</td>
+      //     <td>${subject.obtainedMarks}</td>
+      //    `;
+      //   table.appendChild(newRow);
+      //   srNo++;
+      // }
     }
   </script>
   <div id="main1">
@@ -137,6 +201,10 @@
             <tr>
               <th>PASS/FAIL :</th>
               <td id="pf"></td>
+            </tr>
+            <tr>
+              <th>Gread :</th>
+              <td id="gr"></td>
             </tr>
         </table>
       </div>
